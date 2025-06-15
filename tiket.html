@@ -1,0 +1,293 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1671.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px 'Helvetica Neue'; color: #000000; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 14.0px; font: 12.0px '.Hiragino Kaku Gothic Interface'; color: #000000; -webkit-text-stroke: #000000}
+    span.s1 {font-kerning: none}
+    span.s2 {font: 12.0px '.Hiragino Kaku Gothic Interface'; font-kerning: none}
+    span.s3 {font: 12.0px 'Helvetica Neue'; font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html lang="ja"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width</span><span class="s2">,</span><span class="s1"> initial-scale=1.0"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;</span><span class="s2">ライブイベント</span><span class="s1"> </span><span class="s2">チケット希望枚数フォーム</span><span class="s1">&lt;/title&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@400</span><span class="s2">;</span><span class="s1">500</span><span class="s2">;</span><span class="s1">600</span><span class="s2">;</span><span class="s1">700&amp;display=swap" rel="stylesheet"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-family: 'Inter'</span><span class="s2">,</span><span class="s1"> sans-serif</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #f3f4f6</span><span class="s2">;</span><span class="s1"> /* Light gray background */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.container {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>max-width: 800px</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 2rem auto</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 2rem</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #ffffff</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 0.75rem</span><span class="s2">;</span><span class="s1"> /* Rounded corners */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 6px rgba</span><span class="s2">(</span><span class="s1">0</span><span class="s2">,</span><span class="s1"> 0</span><span class="s2">,</span><span class="s1"> 0</span><span class="s2">,</span><span class="s1"> 0.1</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.form-group label {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 500</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #374151</span><span class="s2">;</span><span class="s1"> /* Darker gray for labels */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 0.5rem</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: block</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.form-group input</span><span class="s2">[</span><span class="s1">type="text"</span><span class="s2">],</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.form-group input</span><span class="s2">[</span><span class="s1">type="number"</span><span class="s2">]</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 0.75rem</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border: 1px solid #d1d5db</span><span class="s2">;</span><span class="s1"> /* Light gray border */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 0.5rem</span><span class="s2">;</span><span class="s1"> /* Rounded corners */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>outline: none</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: border-color 0.2s</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.form-group input</span><span class="s2">[</span><span class="s1">type="text"</span><span class="s2">]</span><span class="s1">:focus</span><span class="s2">,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.form-group input</span><span class="s2">[</span><span class="s1">type="number"</span><span class="s2">]</span><span class="s1">:focus {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-color: #6366f1</span><span class="s2">;</span><span class="s1"> /* Indigo focus color */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 0 0 3px rgba</span><span class="s2">(</span><span class="s1">99</span><span class="s2">,</span><span class="s1"> 102</span><span class="s2">,</span><span class="s1"> 241</span><span class="s2">,</span><span class="s1"> 0.2</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.form-group input</span><span class="s2">[</span><span class="s1">type="checkbox"</span><span class="s2">]</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: scale</span><span class="s2">(</span><span class="s1">1.2</span><span class="s2">);</span><span class="s1"> /* Slightly larger checkbox */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-right: 0.5rem</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn-submit {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #6366f1</span><span class="s2">;</span><span class="s1"> /* Indigo button */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: white</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 0.75rem 1.5rem</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 0.5rem</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 600</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cursor: pointer</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: background-color 0.2s</span><span class="s2">,</span><span class="s1"> box-shadow 0.2s</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: block</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.btn-submit:hover {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #4f46e5</span><span class="s2">;</span><span class="s1"> /* Darker indigo on hover */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 4px 6px rgba</span><span class="s2">(</span><span class="s1">99</span><span class="s2">,</span><span class="s1"> 102</span><span class="s2">,</span><span class="s1"> 241</span><span class="s2">,</span><span class="s1"> 0.2</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.summary-table th</span><span class="s2">,</span><span class="s1"> .summary-table td {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 0.75rem</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-bottom: 1px solid #e5e7eb</span><span class="s2">;</span><span class="s1"> /* Light gray border for table rows */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: left</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.summary-table th {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background-color: #f9fafb</span><span class="s2">;</span><span class="s1"> /* Lighter background for table header */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 600</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #4b5563</span><span class="s2">;</span><span class="s1"> /* Darker gray for table header text */</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;h1 class="text-3xl font-bold text-gray-800 mb-6 text-center"&gt;</span><span class="s2">ライブイベント</span><span class="s1"> </span><span class="s2">チケット希望枚数フォーム</span><span class="s1">&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;p class="text-gray-600 mb-8 text-center"&gt;</span><span class="s2">各出演者にはお客様用にチケット</span><span class="s1">1</span><span class="s2">枚が割り当てられています。出演者ご自身のチケットは不要です。</span><span class="s1">&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;form id="ticketForm" class="space-y-6"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="form-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;label for="performerName"&gt;</span><span class="s2">出演者名</span><span class="s1">:&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;input type="text" id="performerName" name="performerName" placeholder="</span><span class="s2">例</span><span class="s1">: </span><span class="s2">バンド</span><span class="s1">A" required class="mt-1"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="form-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;label for="additionalDesiredTickets"&gt;</span><span class="s2">希望追加枚数</span><span class="s1"> </span><span class="s2">(割り当てられたお客様用チケット</span><span class="s1">1</span><span class="s2">枚に加えて、追加で必要なお客様用チケット枚数)</span><span class="s1">:&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;input type="number" id="additionalDesiredTickets" name="additionalDesiredTickets" min="0" value="0" required class="mt-1"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="form-group"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;label for="ticketsReceivedFromOthers"&gt;</span><span class="s2">他の出演者から譲り受ける枚数</span><span class="s1">:&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;input type="number" id="ticketsReceivedFromOthers" name="ticketsReceivedFromOthers" min="0" value="0" class="mt-1"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="form-group flex items-center"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;input type="checkbox" id="releasesAllocatedCustomerTicket" name="releasesAllocatedCustomerTicket" class="rounded-md text-indigo-600 focus:ring-indigo-500"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;label for="releasesAllocatedCustomerTicket" class="ml-2 mb-0"&gt;</span><span class="s2">割り当てられたお客様用チケット</span><span class="s1">1</span><span class="s2">枚を不要とする</span><span class="s1"> </span><span class="s2">(余剰として出す)</span><span class="s1">: &lt;span class="text-gray-500 text-sm"&gt;</span><span class="s2">(このチケットを必要としない場合はチェックしてください。)</span><span class="s1">&lt;/span&gt;&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button type="submit" class="btn-submit"&gt;</span><span class="s2">送信</span><span class="s1">&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/form&gt;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="messageBox" class="hidden mt-6 p-4 rounded-md text-sm" role="alert"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="mt-10"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-2xl font-bold text-gray-800 mb-4 text-center"&gt;</span><span class="s2">集計結果</span><span class="s1">&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="overflow-x-auto"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;table class="min-w-full bg-white rounded-md summary-table"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;thead&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;th class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider rounded-tl-md"&gt;</span><span class="s2">出演者名</span><span class="s1">&lt;/th&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;th class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"&gt;</span><span class="s2">希望追加枚数</span><span class="s1">&lt;/th&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;th class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"&gt;</span><span class="s2">譲り受け枚数</span><span class="s1">&lt;/th&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;th class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"&gt;</span><span class="s2">割り当てチケット放出</span><span class="s1">&lt;/th&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;th class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider rounded-tr-md"&gt;</span><span class="s2">純チケット要求</span><span class="s1">/</span><span class="s2">余剰</span><span class="s1">&lt;/th&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/tr&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/thead&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;tbody id="summaryTableBody" class="divide-y divide-gray-200"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;!-- Data will be inserted here by JavaScript --&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/tbody&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/table&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="overallSummary" class="mt-6 p-4 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-md text-lg font-semibold text-center"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s2">全体の純チケット要求数</span><span class="s1">: 0</span><span class="s2">枚</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Array to store submitted performer data</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let performersData = </span><span class="s2">[];</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Constants for initial allocation</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const INITIAL_ALLOCATION_PER_PERFORMER = 1</span><span class="s2">;</span><span class="s1"> // </span><span class="s2">各出演者に割り当てられたお客様用チケット枚数</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Get elements</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const ticketForm = document.getElementById</span><span class="s2">(</span><span class="s1">'ticketForm'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const summaryTableBody = document.getElementById</span><span class="s2">(</span><span class="s1">'summaryTableBody'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const overallSummary = document.getElementById</span><span class="s2">(</span><span class="s1">'overallSummary'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const messageBox = document.getElementById</span><span class="s2">(</span><span class="s1">'messageBox'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Function to display message box</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function showMessage</span><span class="s2">(</span><span class="s1">message</span><span class="s2">,</span><span class="s1"> type = 'info'</span><span class="s2">)</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>messageBox.textContent = message</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>messageBox.classList.remove</span><span class="s2">(</span><span class="s1">'hidden'</span><span class="s2">,</span><span class="s1"> 'bg-red-100'</span><span class="s2">,</span><span class="s1"> 'border-red-400'</span><span class="s2">,</span><span class="s1"> 'text-red-700'</span><span class="s2">,</span><span class="s1"> 'bg-green-100'</span><span class="s2">,</span><span class="s1"> 'border-green-400'</span><span class="s2">,</span><span class="s1"> 'text-green-700'</span><span class="s2">,</span><span class="s1"> 'bg-blue-100'</span><span class="s2">,</span><span class="s1"> 'border-blue-400'</span><span class="s2">,</span><span class="s1"> 'text-blue-700'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if </span><span class="s2">(</span><span class="s1">type === 'error'</span><span class="s2">)</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>messageBox.classList.add</span><span class="s2">(</span><span class="s1">'bg-red-100'</span><span class="s2">,</span><span class="s1"> 'border-red-400'</span><span class="s2">,</span><span class="s1"> 'text-red-700'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} else if </span><span class="s2">(</span><span class="s1">type === 'success'</span><span class="s2">)</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>messageBox.classList.add</span><span class="s2">(</span><span class="s1">'bg-green-100'</span><span class="s2">,</span><span class="s1"> 'border-green-400'</span><span class="s2">,</span><span class="s1"> 'text-green-700'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} else {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>messageBox.classList.add</span><span class="s2">(</span><span class="s1">'bg-blue-100'</span><span class="s2">,</span><span class="s1"> 'border-blue-400'</span><span class="s2">,</span><span class="s1"> 'text-blue-700'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>messageBox.classList.remove</span><span class="s2">(</span><span class="s1">'hidden'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setTimeout</span><span class="s2">(()</span><span class="s1"> =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>messageBox.classList.add</span><span class="s2">(</span><span class="s1">'hidden'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span><span class="s2">,</span><span class="s1"> 3000</span><span class="s2">);</span><span class="s1"> // Hide after 3 seconds</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Function to render the summary table and overall summary</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function renderSummary</span><span class="s2">()</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>summaryTableBody.innerHTML = ''</span><span class="s2">;</span><span class="s1"> // Clear existing table rows</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let totalNetTicketsRequired = 0</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>performersData.forEach</span><span class="s2">(</span><span class="s1">performer =&gt; {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let ticketsForCustomerFromPool = performer.additionalDesiredTickets</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p2"><span class="s3"><span class="Apple-converted-space">                </span>// </span><span class="s1">割り当てられたお客様用チケットを放出する場合、その分プールへの要求が減る</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if </span><span class="s2">(</span><span class="s1">performer.releasesAllocatedCustomerTicket</span><span class="s2">)</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>ticketsForCustomerFromPool -= INITIAL_ALLOCATION_PER_PERFORMER</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p2"><span class="s3"><span class="Apple-converted-space">                </span>// </span><span class="s1">他の出演者から譲り受けたチケットはプールからの要求を減らす</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const netTicketsForPerformer = ticketsForCustomerFromPool - performer.ticketsReceivedFromOthers</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>totalNetTicketsRequired += netTicketsForPerformer</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>// Create a new table row for the performer</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const row = document.createElement</span><span class="s2">(</span><span class="s1">'tr'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>row.innerHTML = `</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td class="px-6 py-4 whitespace-nowrap"&gt;${performer.performerName}&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td class="px-6 py-4 whitespace-nowrap"&gt;${performer.additionalDesiredTickets}&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td class="px-6 py-4 whitespace-nowrap"&gt;${performer.ticketsReceivedFromOthers}&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td class="px-6 py-4 whitespace-nowrap"&gt;${performer.releasesAllocatedCustomerTicket ? '</span><span class="s2">はい</span><span class="s1">' : '</span><span class="s2">いいえ</span><span class="s1">'}&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;td class="px-6 py-4 whitespace-nowrap"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>${netTicketsForPerformer &gt; 0 ? `&lt;span class="text-red-600"&gt;${netTicketsForPerformer}</span><span class="s2">枚</span><span class="s1"> </span><span class="s2">(追加要求)</span><span class="s1">&lt;/span&gt;` :</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                           </span>netTicketsForPerformer &lt; 0 ? `&lt;span class="text-green-600"&gt;${Math.abs</span><span class="s2">(</span><span class="s1">netTicketsForPerformer</span><span class="s2">)</span><span class="s1">}</span><span class="s2">枚</span><span class="s1"> </span><span class="s2">(余剰提供)</span><span class="s1">&lt;/span&gt;` :</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                           </span>`0</span><span class="s2">枚</span><span class="s1"> </span><span class="s2">(相殺済み)</span><span class="s1">`}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/td&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>`</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>summaryTableBody.appendChild</span><span class="s2">(</span><span class="s1">row</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Update overall summary</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overallSummary.innerHTML = `</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s2">全体の純チケット要求数</span><span class="s1">:</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>${totalNetTicketsRequired &gt; 0 ? `&lt;span class="text-red-800"&gt;${totalNetTicketsRequired}</span><span class="s2">枚</span><span class="s1"> </span><span class="s2">(追加要求)</span><span class="s1">&lt;/span&gt;` :</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                   </span>totalNetTicketsRequired &lt; 0 ? `&lt;span class="text-green-800"&gt;${Math.abs</span><span class="s2">(</span><span class="s1">totalNetTicketsRequired</span><span class="s2">)</span><span class="s1">}</span><span class="s2">枚</span><span class="s1"> </span><span class="s2">(全体余剰)</span><span class="s1">&lt;/span&gt;` :</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                   </span>`0</span><span class="s2">枚</span><span class="s1"> </span><span class="s2">(全体相殺済み)</span><span class="s1">`}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>`</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Handle form submission</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>ticketForm.addEventListener</span><span class="s2">(</span><span class="s1">'submit'</span><span class="s2">,</span><span class="s1"> function</span><span class="s2">(</span><span class="s1">event</span><span class="s2">)</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>event.preventDefault</span><span class="s2">();</span><span class="s1"> // Prevent default form submission</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const performerName = document.getElementById</span><span class="s2">(</span><span class="s1">'performerName'</span><span class="s2">)</span><span class="s1">.value.trim</span><span class="s2">();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const additionalDesiredTickets = parseInt</span><span class="s2">(</span><span class="s1">document.getElementById</span><span class="s2">(</span><span class="s1">'additionalDesiredTickets'</span><span class="s2">)</span><span class="s1">.value</span><span class="s2">,</span><span class="s1"> 10</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const ticketsReceivedFromOthers = parseInt</span><span class="s2">(</span><span class="s1">document.getElementById</span><span class="s2">(</span><span class="s1">'ticketsReceivedFromOthers'</span><span class="s2">)</span><span class="s1">.value</span><span class="s2">,</span><span class="s1"> 10</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const releasesAllocatedCustomerTicket = document.getElementById</span><span class="s2">(</span><span class="s1">'releasesAllocatedCustomerTicket'</span><span class="s2">)</span><span class="s1">.checked</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Basic validation</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if </span><span class="s2">(</span><span class="s1">!performerName</span><span class="s2">)</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>showMessage</span><span class="s2">(</span><span class="s1">'</span><span class="s2">出演者名を入力してください。</span><span class="s1">'</span><span class="s2">,</span><span class="s1"> 'error'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>return</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if </span><span class="s2">(</span><span class="s1">isNaN</span><span class="s2">(</span><span class="s1">additionalDesiredTickets</span><span class="s2">)</span><span class="s1"> || additionalDesiredTickets &lt; 0</span><span class="s2">)</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>showMessage</span><span class="s2">(</span><span class="s1">'</span><span class="s2">希望追加枚数は</span><span class="s1">0</span><span class="s2">以上の数字で入力してください。</span><span class="s1">'</span><span class="s2">,</span><span class="s1"> 'error'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>return</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if </span><span class="s2">(</span><span class="s1">isNaN</span><span class="s2">(</span><span class="s1">ticketsReceivedFromOthers</span><span class="s2">)</span><span class="s1"> || ticketsReceivedFromOthers &lt; 0</span><span class="s2">)</span><span class="s1"> {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>showMessage</span><span class="s2">(</span><span class="s1">'</span><span class="s2">他の出演者から譲り受ける枚数は</span><span class="s1">0</span><span class="s2">以上の数字で入力してください。</span><span class="s1">'</span><span class="s2">,</span><span class="s1"> 'error'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>return</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Create a performer object</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const newPerformer = {</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>performerName</span><span class="s2">,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>additionalDesiredTickets</span><span class="s2">,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>ticketsReceivedFromOthers</span><span class="s2">,</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>releasesAllocatedCustomerTicket</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span><span class="s2">;</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Add to the data array</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>performersData.push</span><span class="s2">(</span><span class="s1">newPerformer</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Render the updated summary</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>renderSummary</span><span class="s2">();</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Clear the form fields</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>ticketForm.reset</span><span class="s2">();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>showMessage</span><span class="s2">(</span><span class="s1">'</span><span class="s2">データが正常に送信されました！</span><span class="s1">'</span><span class="s2">,</span><span class="s1"> 'success'</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span><span class="s2">);</span></p>
+<p class="p1"><span class="s1"><br>
+</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Initial render of summary </span><span class="s2">(</span><span class="s1">empty table</span><span class="s2">)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>renderSummary</span><span class="s2">();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
