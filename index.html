@@ -400,7 +400,26 @@
     // ===== メインループ =====
     function tick(){
       if(!running) return;
+      // 次フレームを必ず先に予約（以降で例外が出てもループは止まらない）
       rafId = requestAnimationFrame(tick);
+      try{
+        tickBody();
+      }catch(err){
+        // 一過性のエラーでループ全体を止めない
+        hint.textContent = '解析を再開しています…';
+      }
+    }
+
+    function tickBody(){
+      if(!analyser) return;
+
+      // スマホでは画面操作やアプリ切替でAudioContextが一時停止することがある。
+      // その場合データが流れず固まって見えるので自動復帰させる。
+      if(audioCtx && audioCtx.state === 'suspended'){
+        audioCtx.resume().catch(()=>{});
+        hint.textContent = 'マイクを再開しています…画面をタップしてください';
+        return;
+      }
 
       analyser.getFloatTimeDomainData(timeBuf);
       analyser.getFloatFrequencyData(freqBuf);
@@ -519,6 +538,18 @@
       hint.textContent = '「あー」と伸ばして発声してください';
       tick();
     }
+
+    // AudioContextが止まっていたら復帰させる共通処理
+    function resumeAudio(){
+      if(running && audioCtx && audioCtx.state === 'suspended'){
+        audioCtx.resume().catch(()=>{});
+      }
+    }
+    // タブ復帰・画面操作で確実に再開
+    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) resumeAudio(); });
+    window.addEventListener('focus', resumeAudio);
+    document.addEventListener('touchstart', resumeAudio, {passive:true});
+    document.addEventListener('click', resumeAudio);
 
     function stopMic(){
       running = false;
