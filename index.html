@@ -76,6 +76,7 @@
       transition:transform .08s ease, background .2s;
     }
     .btn:active{transform:scale(.98);}
+    .btn:disabled{opacity:.45;cursor:default;}
     .btn-start{background:var(--accent);color:#06202c;}
     .btn-stop{background:var(--bad);color:#fff;}
     .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-size:14px;padding:12px;}
@@ -104,6 +105,23 @@
     }
     .result-box.show{display:block;}
     .result-box b{font-size:15px;}
+
+    /* キャリブレーション / 設定 / 履歴 */
+    .subtle{font-size:12px;color:var(--muted);}
+    .calib-status{font-size:12px;margin-top:10px;line-height:1.5;}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 4px;}
+    .row label{font-size:13px;color:var(--text);}
+    input[type=range]{width:100%;accent-color:var(--accent);height:26px;}
+    .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:6px;}
+    .seg button{flex:1;background:transparent;color:var(--muted);border:none;padding:11px;font-size:13px;font-weight:600;cursor:pointer;}
+    .seg button.active{background:var(--accent);color:#06202c;}
+    .thresh-val{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:700;font-size:13px;}
+    .chart{width:100%;height:160px;display:block;margin-top:6px;background:var(--panel2);border-radius:10px;}
+    .hist-empty{font-size:13px;color:var(--muted);text-align:center;padding:18px 0;}
+    .hist-list{margin-top:10px;font-size:12px;}
+    .hist-row{display:flex;justify-content:space-between;padding:6px 2px;border-bottom:1px solid var(--line);color:var(--muted);}
+    .hist-row .sc{font-weight:700;font-variant-numeric:tabular-nums;}
+    .link-btn{background:none;border:none;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;padding:6px 0 0;}
 
     details{margin-top:16px;}
     summary{font-size:13px;color:var(--muted);cursor:pointer;padding:8px 0;}
@@ -146,6 +164,8 @@
     <div class="session">
       <button id="sessionBtn" class="btn btn-ghost" disabled>5秒間の測定を記録する</button>
     </div>
+    <button id="calibBtn" class="btn btn-ghost" disabled>基準声（楽な発声）を登録する</button>
+    <div id="calibStatus" class="calib-status subtle">基準声は未登録です（絶対基準で判定中）</div>
     <div id="countdown" class="countdown"></div>
     <div id="resultBox" class="result-box"></div>
   </div>
@@ -183,6 +203,36 @@
     </div>
   </div>
 
+  <!-- 設定カード -->
+  <div class="card">
+    <h2>判定設定</h2>
+    <div class="subtle" style="margin-bottom:6px;">判定モード</div>
+    <div class="seg" id="modeSeg">
+      <button data-mode="abs">絶対基準</button>
+      <button data-mode="rel">相対（基準声）</button>
+    </div>
+    <div class="subtle" style="margin-top:8px;line-height:1.5;">
+      「相対」は登録した<strong>基準声（楽な発声）</strong>を0点として、それより力んだ分を指数化します。個人差を吸収できます。
+    </div>
+
+    <div class="row" style="margin-top:18px;"><label>良好の上限（緑 → 黄）</label><span id="thGoodVal" class="thresh-val">35</span></div>
+    <input type="range" id="thGood" min="10" max="60" value="35">
+    <div class="row" style="margin-top:10px;"><label>力みの下限（黄 → 赤）</label><span id="thBadVal" class="thresh-val">65</span></div>
+    <input type="range" id="thBad" min="40" max="90" value="65">
+    <button id="thReset" class="link-btn">しきい値を初期値に戻す</button>
+  </div>
+
+  <!-- 履歴カード -->
+  <div class="card">
+    <h2>測定履歴</h2>
+    <div id="histWrap">
+      <svg id="histChart" class="chart" viewBox="0 0 320 160" preserveAspectRatio="none"></svg>
+      <div id="histList" class="hist-list"></div>
+      <button id="histClear" class="link-btn">履歴を消去する</button>
+    </div>
+    <div id="histEmpty" class="hist-empty">まだ記録がありません。「5秒間の測定を記録」で履歴が残ります。</div>
+  </div>
+
   <details>
     <summary>使い方・判定の仕組みについて</summary>
     <div class="note">
@@ -190,12 +240,12 @@
       <ul>
         <li>静かな場所で、スマホの口元から15〜20cmで構えます。</li>
         <li>「マイクを開始」を押し、「あー」を<strong>同じ高さ・同じ大きさ</strong>で3〜5秒伸ばします。</li>
-        <li>力みのない状態（あくびの直後、ため息まじりの楽な声）を基準に、声を変えて比べてみましょう。</li>
-        <li>「5秒間の測定を記録」で平均スコアを判定します。</li>
+        <li>はじめに「基準声を登録」で、力みのない楽な発声（あくびの直後・ため息まじりの声）を登録すると、相対モードで自分に合った判定ができます。</li>
+        <li>「5秒間の測定を記録」で平均スコアを判定し、履歴に残ります。</li>
       </ul>
       <p><strong>判定の仕組み</strong></p>
       <p>外喉頭筋の活動は本来EMG（筋電図）で測りますが、スマホでは測れません。本アプリは、外喉頭筋が過剰に働いたとき（喉頭挙上・声門の締め付け＝プレス発声）に生じる<strong>音響的な特徴</strong>──高域成分の増加、発声中のピッチ上ずり、周期・音量の不安定さ、雑音成分の増加──を解析し、それらを合成して「力み指数」として推定しています。</p>
-      <p>低い（緑）＝外喉頭筋の関与が少ない自然な発声。高い（赤）＝関与が大きい力んだ発声、と読み替えてください。</p>
+      <p>低い（緑）＝外喉頭筋の関与が少ない自然な発声。高い（赤）＝関与が大きい力んだ発声、と読み替えてください。設定・基準声・履歴はこの端末内（ブラウザ）にのみ保存されます。</p>
     </div>
   </details>
 
@@ -212,6 +262,8 @@
     const $ = id => document.getElementById(id);
     const micBtn = $('micBtn');
     const sessionBtn = $('sessionBtn');
+    const calibBtn = $('calibBtn');
+    const calibStatus = $('calibStatus');
     const levelBar = $('levelBar');
     const hint = $('hint');
     const scoreEl = $('score');
@@ -220,8 +272,30 @@
     const verdictSub = $('verdictSub');
     const countdown = $('countdown');
     const resultBox = $('resultBox');
+    const modeSeg = $('modeSeg');
+    const thGood = $('thGood'), thBad = $('thBad');
+    const thGoodVal = $('thGoodVal'), thBadVal = $('thBadVal');
+    const histChart = $('histChart'), histList = $('histList');
+    const histWrap = $('histWrap'), histEmpty = $('histEmpty');
 
     const GAUGE_CIRC = 2 * Math.PI * 95; // 596.9
+
+    // ===== 永続化 =====
+    function loadJSON(key, def){
+      try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch(e){ return def; }
+    }
+    function saveJSON(key, val){
+      try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+    }
+
+    let TH = loadJSON('tfgc_th_v1', {good:35, bad:65});
+    let calib = loadJSON('tfgc_calib_v1', null);          // {sp,dr,ji,sh,hn} 生の基準値
+    let mode = localStorage.getItem('tfgc_mode_v1') || 'abs';
+    if(mode==='rel' && !calib) mode='abs';
+    let history = loadJSON('tfgc_hist_v1', []);            // [{t, score}]
+
+    // 相対モードのスパン（基準声からどれだけ悪化すると100になるか）
+    const SPAN = { sp:12, dr:1.5, ji:0.015, sh:0.06, hn:12 };
 
     // ===== Audio state =====
     let audioCtx = null, analyser = null, source = null, stream = null;
@@ -229,27 +303,28 @@
     let timeBuf = null, freqBuf = null, sampleRate = 44100;
 
     // 時系列の履歴（揺れ・ドリフト算出用）
-    const f0Hist = [];      // 直近のF0
-    const ampHist = [];     // 直近のRMS
+    const f0Hist = [];
+    const ampHist = [];
     const HIST = 24;
 
-    // セッション記録
-    let recording = false;
-    let recScores = [], recFeats = null, recStart = 0;
+    // 5秒キャプチャの状態
+    let capturing = false, capMode = 'measure', capStart = 0, capTimer = null;
+    let capScores = [];
+    let capRaw  = {sp:0,dr:0,ji:0,sh:0,hn:0,n:0};   // 生値の合計（基準声・分析用）
+    let capFeat = {sp:0,dr:0,ji:0,hn:0,n:0};        // 正規化スコアの合計（要因分析用）
     const REC_MS = 5000;
 
-    // 平滑化された表示値
     let dispScore = 0;
 
     // ===== ユーティリティ =====
     const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
     const lerp = (a,b,t)=>a+(b-a)*t;
+    function avg(arr){return arr.length? arr.reduce((s,x)=>s+x,0)/arr.length : 0;}
 
-    function setMeter(barId, valId, pct, valText, invertColor){
+    function setMeter(barId, valId, pct, valText){
       const bar = $(barId);
       pct = clamp(pct,0,100);
       bar.style.width = pct + '%';
-      // pct高=悪い → 赤。invertColorは使っていない（全指標：低い方が良い）
       let col;
       if(pct < 40) col = 'var(--good)';
       else if(pct < 70) col = 'var(--warn)';
@@ -259,38 +334,31 @@
     }
 
     // ===== ピッチ検出（自己相関）=====
-    // 戻り値: {f0, clarity(0-1)}  無声/不明瞭なら f0=0
     function detectPitch(buf, sr){
       const n = buf.length;
-      // RMS
       let rms = 0;
       for(let i=0;i<n;i++) rms += buf[i]*buf[i];
       rms = Math.sqrt(rms/n);
       if(rms < 0.008) return {f0:0, clarity:0, rms};
 
-      // 自己相関
       const MINF = 70, MAXF = 500;
       const maxLag = Math.floor(sr/MINF);
       const minLag = Math.floor(sr/MAXF);
       let bestLag = -1, bestVal = 0;
-      // r(0)
       let r0 = 0;
       for(let i=0;i<n;i++) r0 += buf[i]*buf[i];
       if(r0 === 0) return {f0:0, clarity:0, rms};
 
-      let prev = 0, foundDip = false;
+      let foundDip = false;
       for(let lag=minLag; lag<=maxLag; lag++){
         let r = 0;
         for(let i=0;i<n-lag;i++) r += buf[i]*buf[i+lag];
         const norm = r / r0;
-        // 最初の谷を越えてからピークを探す（オクターブ誤検出抑制）
         if(!foundDip){ if(norm < 0.4) foundDip = true; }
         else if(norm > bestVal){ bestVal = norm; bestLag = lag; }
-        prev = norm;
       }
       if(bestLag <= 0 || bestVal < 0.45) return {f0:0, clarity:bestVal, rms};
 
-      // 放物線補間で精度向上
       let lag = bestLag;
       const yl = autocorrAt(buf, lag-1, r0);
       const yc = bestVal;
@@ -309,112 +377,93 @@
       return r/r0;
     }
 
-    // ===== スペクトル解析（締め付け指標）=====
-    // freqBuf はdB値。F0を基準に高域/低域のエネルギー比を取る
-    function spectralTilt(freqDb, sr, f0){
-      const n = freqDb.length;            // = fftSize/2
+    // ===== スペクトル解析 =====
+    function spectralTilt(freqDb, sr){
+      const n = freqDb.length;
       const binHz = (sr/2)/n;
-      // dB→linear（相対）
       function bandEnergy(lo,hi){
         let sum=0, cnt=0;
         const a=Math.max(1,Math.floor(lo/binHz));
         const b=Math.min(n-1,Math.floor(hi/binHz));
-        for(let i=a;i<=b;i++){
-          sum += Math.pow(10, freqDb[i]/10);
-          cnt++;
-        }
+        for(let i=a;i<=b;i++){ sum += Math.pow(10, freqDb[i]/10); cnt++; }
         return cnt? sum/cnt : 1e-12;
       }
       const low  = bandEnergy(80, 1000);
       const high = bandEnergy(2500, 6000);
       if(low <= 0) return 0;
-      // 比のdB。高域が強いほど大（締め付け傾向）
-      let ratioDb = 10*Math.log10(high/low);
-      return ratioDb; // 概ね -40 〜 +5 程度
+      return 10*Math.log10(high/low);
     }
 
-    // ===== 揺れ（ジッター/シマー）=====
     function jitterShimmer(){
-      // ジッター：F0の相対変動
       let jit=0, jn=0;
       for(let i=1;i<f0Hist.length;i++){
-        if(f0Hist[i]>0 && f0Hist[i-1]>0){
-          jit += Math.abs(f0Hist[i]-f0Hist[i-1])/f0Hist[i-1];
-          jn++;
-        }
+        if(f0Hist[i]>0 && f0Hist[i-1]>0){ jit += Math.abs(f0Hist[i]-f0Hist[i-1])/f0Hist[i-1]; jn++; }
       }
-      jit = jn? jit/jn : 0; // 0〜0.1程度
-      // シマー：振幅の相対変動
+      jit = jn? jit/jn : 0;
       let shim=0, sn=0;
       for(let i=1;i<ampHist.length;i++){
-        if(ampHist[i]>0 && ampHist[i-1]>0){
-          shim += Math.abs(ampHist[i]-ampHist[i-1])/ampHist[i-1];
-          sn++;
-        }
+        if(ampHist[i]>0 && ampHist[i-1]>0){ shim += Math.abs(ampHist[i]-ampHist[i-1])/ampHist[i-1]; sn++; }
       }
       shim = sn? shim/sn : 0;
       return {jit, shim};
     }
 
-    // ===== ピッチドリフト（喉頭挙上の代理）=====
     function pitchDrift(){
       const v = f0Hist.filter(x=>x>0);
       if(v.length < 6) return 0;
-      // 後半平均 − 前半平均、半音換算
       const half = Math.floor(v.length/2);
       const a = avg(v.slice(0,half));
       const b = avg(v.slice(half));
       if(a<=0) return 0;
-      const semitones = 12*Math.log2(b/a); // 正＝上ずり
-      return semitones;
+      return 12*Math.log2(b/a);
     }
-    function avg(arr){return arr.length? arr.reduce((s,x)=>s+x,0)/arr.length : 0;}
 
-    // ===== HNR推定 =====
-    // 自己相関ピーク r からの近似: HNR = 10log10(r/(1-r))
     function hnrFrom(clarity){
       const r = clamp(clarity, 0.001, 0.999);
-      return 10*Math.log10(r/(1-r)); // 低クラリティ→低HNR
+      return 10*Math.log10(r/(1-r));
     }
 
-    // ===== 0-100スコア化（各指標：高い=力み）=====
-    function normSpectral(ratioDb){
-      // -25dB付近=自然(0) , -5dB付近=強い締め付け(100)
-      return clamp((ratioDb + 25) / 20 * 100, 0, 100);
-    }
-    function normDrift(semi){
-      // 0.3半音以内=自然(0) , 2半音上ずり=100
-      return clamp((Math.abs(semi) - 0.3) / 1.7 * 100, 0, 100);
-    }
+    // ===== 絶対基準の0-100化 =====
+    function normSpectral(ratioDb){ return clamp((ratioDb + 25) / 20 * 100, 0, 100); }
+    function normDrift(semi){ return clamp((Math.abs(semi) - 0.3) / 1.7 * 100, 0, 100); }
     function normJitter(jit, shim){
-      // jitter 1%以下/shimmer 4%以下=自然
       const j = clamp((jit*100 - 0.6)/2.4 * 100, 0, 100);
       const s = clamp((shim*100 - 3)/9 * 100, 0, 100);
       return (j*0.5 + s*0.5);
     }
-    function normHnr(hnr){
-      // HNR 20dB以上=クリア(0) , 7dB以下=濁り(100)
-      return clamp((20 - hnr) / 13 * 100, 0, 100);
+    function normHnr(hnr){ return clamp((20 - hnr) / 13 * 100, 0, 100); }
+
+    // ===== 生値 → サブスコア・合成（モード依存）=====
+    function computeScores(raw){
+      let sSpectral, sDrift, sJitter, sHnr;
+      const dAbs = Math.abs(raw.drift);
+      if(mode==='rel' && calib){
+        sSpectral = clamp((raw.ratioDb - calib.sp)/SPAN.sp*100, 0, 100);
+        sDrift    = clamp((dAbs - calib.dr)/SPAN.dr*100, 0, 100);
+        const ji  = clamp((raw.jit - calib.ji)/SPAN.ji*100, 0, 100);
+        const sh  = clamp((raw.shim - calib.sh)/SPAN.sh*100, 0, 100);
+        sJitter   = (ji+sh)/2;
+        sHnr      = clamp((calib.hn - raw.hnr)/SPAN.hn*100, 0, 100);
+      } else {
+        sSpectral = normSpectral(raw.ratioDb);
+        sDrift    = normDrift(raw.drift);
+        sJitter   = normJitter(raw.jit, raw.shim);
+        sHnr      = normHnr(raw.hnr);
+      }
+      const composite = sSpectral*0.38 + sDrift*0.27 + sJitter*0.18 + sHnr*0.17;
+      return {sSpectral, sDrift, sJitter, sHnr, composite};
     }
 
     // ===== メインループ =====
     function tick(){
       if(!running) return;
-      // 次フレームを必ず先に予約（以降で例外が出てもループは止まらない）
       rafId = requestAnimationFrame(tick);
-      try{
-        tickBody();
-      }catch(err){
-        // 一過性のエラーでループ全体を止めない
-        hint.textContent = '解析を再開しています…';
-      }
+      try{ tickBody(); }
+      catch(err){ hint.textContent = '解析を再開しています…'; }
     }
 
     function tickBody(){
       if(!analyser) return;
-
-      // スマホでは画面操作やアプリ切替でAudioContextが一時停止することがある。
-      // その場合データが流れず固まって見えるので自動復帰させる。
       if(audioCtx && audioCtx.state === 'suspended'){
         audioCtx.resume().catch(()=>{});
         hint.textContent = 'マイクを再開しています…画面をタップしてください';
@@ -425,89 +474,72 @@
       analyser.getFloatFrequencyData(freqBuf);
 
       const {f0, clarity, rms} = detectPitch(timeBuf, sampleRate);
-
-      // レベルメーター
-      const level = clamp(rms*600, 0, 100);
-      levelBar.style.width = level + '%';
+      levelBar.style.width = clamp(rms*600, 0, 100) + '%';
 
       const voiced = f0 > 0 && rms > 0.012;
-
       if(voiced){
         f0Hist.push(f0); if(f0Hist.length>HIST) f0Hist.shift();
         ampHist.push(rms); if(ampHist.length>HIST) ampHist.shift();
-        hint.textContent = '発声を解析中…';
-      } else {
+        if(!capturing) hint.textContent = '発声を解析中…';
+      } else if(!capturing){
         hint.textContent = '「あー」と伸ばして発声してください';
       }
 
-      // 特徴量
-      const ratioDb = voiced ? spectralTilt(freqBuf, sampleRate, f0) : null;
-      const {jit, shim} = jitterShimmer();
-      const drift = pitchDrift();
-      const hnr = voiced ? hnrFrom(clarity) : null;
-
-      // 0-100化
-      const sSpectral = ratioDb!==null ? normSpectral(ratioDb) : 0;
-      const sDrift    = normDrift(drift);
-      const sJitter   = normJitter(jit, shim);
-      const sHnr      = hnr!==null ? normHnr(hnr) : 0;
-
-      // 合成（重み）— 締め付けとドリフトを重視
-      const composite = voiced
-        ? (sSpectral*0.38 + sDrift*0.27 + sJitter*0.18 + sHnr*0.17)
-        : null;
-
-      // 表示更新
-      if(voiced && composite!==null){
-        // 表示スコアは平滑化
-        dispScore = lerp(dispScore, composite, 0.18);
-        updateVerdict(dispScore);
-        setMeter('bSpectral','vSpectral', sSpectral, ratioDb.toFixed(1)+' dB');
-        setMeter('bDrift','vDrift', sDrift, (drift>=0?'+':'')+drift.toFixed(2)+' 半音');
-        setMeter('bJitter','vJitter', sJitter, 'J '+(jit*100).toFixed(1)+'% / S '+(shim*100).toFixed(1)+'%');
-        setMeter('bHnr','vHnr', sHnr, hnr.toFixed(1)+' dB');
-        $('vF0').textContent = f0.toFixed(0) + ' Hz';
-
-        // セッション記録
-        if(recording){
-          recScores.push(composite);
-          accumFeat(sSpectral, sDrift, sJitter, sHnr);
+      if(!voiced){
+        if(!capturing){
+          dispScore = lerp(dispScore, 0, 0.05);
+          updateVerdict(dispScore, true);
         }
-      } else if(!recording){
-        // 無声時はゲージをゆっくり待機色へ
-        dispScore = lerp(dispScore, 0, 0.05);
-        updateVerdict(dispScore, true);
+        return;
       }
+
+      const raw = {
+        ratioDb: spectralTilt(freqBuf, sampleRate),
+        drift: pitchDrift(),
+        hnr: hnrFrom(clarity)
+      };
+      const js = jitterShimmer();
+      raw.jit = js.jit; raw.shim = js.shim;
+
+      const sc = computeScores(raw);
+
+      dispScore = lerp(dispScore, sc.composite, 0.18);
+      updateVerdict(dispScore);
+      setMeter('bSpectral','vSpectral', sc.sSpectral, raw.ratioDb.toFixed(1)+' dB');
+      setMeter('bDrift','vDrift', sc.sDrift, (raw.drift>=0?'+':'')+raw.drift.toFixed(2)+' 半音');
+      setMeter('bJitter','vJitter', sc.sJitter, 'J '+(raw.jit*100).toFixed(1)+'% / S '+(raw.shim*100).toFixed(1)+'%');
+      setMeter('bHnr','vHnr', sc.sHnr, raw.hnr.toFixed(1)+' dB');
+      $('vF0').textContent = f0.toFixed(0) + ' Hz';
+
+      if(capturing){
+        capScores.push(sc.composite);
+        capRaw.sp+=raw.ratioDb; capRaw.dr+=Math.abs(raw.drift); capRaw.ji+=raw.jit; capRaw.sh+=raw.shim; capRaw.hn+=raw.hnr; capRaw.n++;
+        capFeat.sp+=sc.sSpectral; capFeat.dr+=sc.sDrift; capFeat.ji+=sc.sJitter; capFeat.hn+=sc.sHnr; capFeat.n++;
+      }
+    }
+
+    function classify(score){
+      if(score < TH.good) return {cls:'good', col:'#22c55e', label:'関与なし（良好）'};
+      if(score < TH.bad)  return {cls:'warn', col:'#f59e0b', label:'やや関与あり'};
+      return {cls:'bad', col:'#ef4444', label:'関与あり（力み）'};
     }
 
     function updateVerdict(score, idle){
       const s = Math.round(score);
       scoreEl.textContent = idle && score<3 ? '--' : s;
-      // ゲージ
-      const off = GAUGE_CIRC * (1 - clamp(score,0,100)/100);
-      gaugeArc.style.strokeDashoffset = off;
+      gaugeArc.style.strokeDashoffset = GAUGE_CIRC * (1 - clamp(score,0,100)/100);
 
-      let col, label, cls;
-      if(score < 35){ col='#22c55e'; label='関与なし（良好）'; cls='good'; }
-      else if(score < 65){ col='#f59e0b'; label='やや関与あり'; cls='warn'; }
-      else { col='#ef4444'; label='関与あり（力み）'; cls='bad'; }
-
-      gaugeArc.style.stroke = col;
-      scoreEl.className = 'gauge-score state-'+cls;
-      verdictLabel.textContent = idle && score<3 ? '待機中' : label;
-      verdictLabel.className = 'verdict-label bg-'+(idle && score<3 ? 'good' : cls);
+      const c = classify(score);
+      gaugeArc.style.stroke = c.col;
+      scoreEl.className = 'gauge-score state-'+c.cls;
+      verdictLabel.textContent = idle && score<3 ? '待機中' : c.label;
+      verdictLabel.className = 'verdict-label bg-'+(idle && score<3 ? 'good' : c.cls);
 
       if(!idle || score>=3){
-        if(cls==='good') verdictSub.innerHTML='外喉頭筋の過剰な関与は<strong>検出されていません</strong>。この感覚を覚えましょう。';
-        else if(cls==='warn') verdictSub.innerHTML='少し力みの兆候があります。喉を開き、息を流す意識で。';
+        if(c.cls==='good') verdictSub.innerHTML='外喉頭筋の過剰な関与は<strong>検出されていません</strong>。この感覚を覚えましょう。';
+        else if(c.cls==='warn') verdictSub.innerHTML='少し力みの兆候があります。喉を開き、息を流す意識で。';
         else verdictSub.innerHTML='喉に<strong>力みの兆候</strong>。あくび・ため息まじりの楽な発声を試してください。';
       }
-    }
-
-    // セッション特徴量の蓄積
-    function accumFeat(sp,dr,ji,hn){
-      if(!recFeats) recFeats={sp:0,dr:0,ji:0,hn:0,n:0};
-      recFeats.sp+=sp; recFeats.dr+=dr; recFeats.ji+=ji; recFeats.hn+=hn; recFeats.n++;
     }
 
     // ===== マイク制御 =====
@@ -535,17 +567,14 @@
       micBtn.textContent = 'マイクを停止';
       micBtn.className = 'btn btn-stop';
       sessionBtn.disabled = false;
+      calibBtn.disabled = false;
       hint.textContent = '「あー」と伸ばして発声してください';
       tick();
     }
 
-    // AudioContextが止まっていたら復帰させる共通処理
     function resumeAudio(){
-      if(running && audioCtx && audioCtx.state === 'suspended'){
-        audioCtx.resume().catch(()=>{});
-      }
+      if(running && audioCtx && audioCtx.state === 'suspended'){ audioCtx.resume().catch(()=>{}); }
     }
-    // タブ復帰・画面操作で確実に再開
     document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) resumeAudio(); });
     window.addEventListener('focus', resumeAudio);
     document.addEventListener('touchstart', resumeAudio, {passive:true});
@@ -554,84 +583,200 @@
     function stopMic(){
       running = false;
       if(rafId) cancelAnimationFrame(rafId);
+      if(capTimer){ clearInterval(capTimer); capTimer=null; }
       if(stream) stream.getTracks().forEach(t=>t.stop());
       if(audioCtx) audioCtx.close();
       audioCtx=null; analyser=null; source=null; stream=null;
       micBtn.textContent = 'マイクを開始して測定';
       micBtn.className = 'btn btn-start';
       sessionBtn.disabled = true;
+      calibBtn.disabled = true;
       levelBar.style.width='0%';
       hint.textContent = 'マイクの使用を許可してください';
-      recording=false; countdown.textContent='';
+      capturing=false; countdown.textContent='';
       f0Hist.length=0; ampHist.length=0;
     }
 
-    micBtn.addEventListener('click', ()=>{
-      if(running) stopMic(); else startMic();
-    });
+    micBtn.addEventListener('click', ()=>{ if(running) stopMic(); else startMic(); });
 
-    // ===== 5秒セッション =====
-    sessionBtn.addEventListener('click', ()=>{
-      if(!running || recording) return;
-      recording = true;
-      recScores = []; recFeats = null; recStart = performance.now();
+    // ===== 5秒キャプチャ（測定 / 基準声登録 共通）=====
+    function startCapture(m){
+      if(!running || capturing) return;
+      capturing = true; capMode = m; capStart = performance.now();
+      capScores = [];
+      capRaw  = {sp:0,dr:0,ji:0,sh:0,hn:0,n:0};
+      capFeat = {sp:0,dr:0,ji:0,hn:0,n:0};
       resultBox.classList.remove('show');
-      sessionBtn.disabled = true;
-      countdown.textContent = '測定中… 「あー」と伸ばしてください';
+      sessionBtn.disabled = true; calibBtn.disabled = true;
+      const head = (m==='calibrate') ? '基準声を登録中…' : '測定中…';
+      countdown.textContent = head + ' 「あー」と伸ばしてください';
 
-      const timer = setInterval(()=>{
-        const el = performance.now() - recStart;
-        const remain = Math.max(0, REC_MS - el);
-        countdown.textContent = '測定中… あと ' + (remain/1000).toFixed(1) + ' 秒';
+      capTimer = setInterval(()=>{
+        const remain = Math.max(0, REC_MS - (performance.now() - capStart));
+        countdown.textContent = head + ' あと ' + (remain/1000).toFixed(1) + ' 秒';
         if(remain<=0){
-          clearInterval(timer);
-          recording = false;
-          sessionBtn.disabled = false;
+          clearInterval(capTimer); capTimer=null;
+          capturing = false;
+          sessionBtn.disabled = false; calibBtn.disabled = false;
           countdown.textContent = '';
-          showResult();
+          finishCapture();
         }
       }, 100);
-    });
+    }
 
-    function showResult(){
-      if(recScores.length < 5){
+    function finishCapture(){
+      if(capRaw.n < 5){
         resultBox.innerHTML = '十分な発声が検出できませんでした。声を伸ばしてもう一度お試しください。';
-        resultBox.classList.add('show');
+        resultBox.className = 'result-box show';
         return;
       }
-      // 安定区間の中央値寄り平均（外れ値を緩和）
-      const sorted = recScores.slice().sort((a,b)=>a-b);
+      const rawAvg = {
+        sp: capRaw.sp/capRaw.n, dr: capRaw.dr/capRaw.n, ji: capRaw.ji/capRaw.n,
+        sh: capRaw.sh/capRaw.n, hn: capRaw.hn/capRaw.n
+      };
+
+      if(capMode==='calibrate'){
+        calib = rawAvg;
+        saveJSON('tfgc_calib_v1', calib);
+        setMode('rel');
+        resultBox.innerHTML =
+          '<b class="state-good">基準声を登録しました</b><br>' +
+          '<span style="color:var(--muted)">この声を0点として、これより力んだ分を指数化します（相対モード）。' +
+          'いつもと違う発声をして指数が上がるか確認してみましょう。</span>';
+        resultBox.className = 'result-box show';
+        return;
+      }
+
+      // 測定モード：安定区間のトリム平均
+      const sorted = capScores.slice().sort((a,b)=>a-b);
       const trimmed = sorted.slice(Math.floor(sorted.length*0.1), Math.ceil(sorted.length*0.9));
-      const mean = avg(trimmed);
-      const f = recFeats;
-      const fm = f && f.n ? {sp:f.sp/f.n, dr:f.dr/f.n, ji:f.ji/f.n, hn:f.hn/f.n} : null;
+      const mean = avg(trimmed.length?trimmed:sorted);
+      const c = classify(mean);
 
-      let verdict, vcls;
-      if(mean < 35){ verdict='外喉頭筋の関与は少ない（良好）'; vcls='good'; }
-      else if(mean < 65){ verdict='やや関与あり'; vcls='warn'; }
-      else { verdict='外喉頭筋の関与が大きい（力み）'; vcls='bad'; }
-
-      // 最も支配的な要因
       let factor='';
-      if(fm){
-        const items=[['高域の締め付け',fm.sp],['喉頭の吊り上がり',fm.dr],['声の揺れ',fm.ji],['声の濁り',fm.hn]];
+      if(capFeat.n){
+        const m = capFeat.n;
+        const items=[['高域の締め付け',capFeat.sp/m],['喉頭の吊り上がり',capFeat.dr/m],['声の揺れ',capFeat.ji/m],['声の濁り',capFeat.hn/m]];
         items.sort((a,b)=>b[1]-a[1]);
         if(items[0][1] > 40) factor = '主な要因：' + items[0][0];
       }
 
+      // 履歴へ追加
+      history.push({ t: Date.now(), score: Math.round(mean) });
+      if(history.length > 60) history = history.slice(-60);
+      saveJSON('tfgc_hist_v1', history);
+      renderHistory();
+
+      const modeLabel = (mode==='rel' && calib) ? '相対（基準声）' : '絶対基準';
       resultBox.innerHTML =
-        '<b class="state-'+vcls+'">判定：'+verdict+'</b><br>' +
-        '平均 力み指数：<b>'+Math.round(mean)+'</b> / 100　（'+recScores.length+'フレーム）<br>' +
+        '<b class="state-'+c.cls+'">判定：'+c.label+'</b><br>' +
+        '平均 力み指数：<b>'+Math.round(mean)+'</b> / 100　（'+modeLabel+'）<br>' +
         (factor ? factor+'<br>' : '') +
         '<span style="color:var(--muted)">' +
-          (vcls==='good'
+          (c.cls==='good'
             ? 'この発声の感覚を基準として覚えておきましょう。'
             : '喉を開き、息を流す発声で再測定し、指数が下がるか確認してください。') +
         '</span>';
       resultBox.className = 'result-box show';
     }
 
-    // ページ離脱で停止
+    sessionBtn.addEventListener('click', ()=>startCapture('measure'));
+    calibBtn.addEventListener('click', ()=>startCapture('calibrate'));
+
+    // ===== モード切替 =====
+    function setMode(m){
+      if(m==='rel' && !calib){
+        // 基準声が無い場合は登録を促す
+        calibStatus.innerHTML = '相対モードには<strong>基準声の登録</strong>が必要です。先に「基準声を登録」してください。';
+        m='abs';
+      }
+      mode = m;
+      localStorage.setItem('tfgc_mode_v1', mode);
+      [...modeSeg.children].forEach(b=> b.classList.toggle('active', b.dataset.mode===mode));
+      updateCalibStatus();
+    }
+    function updateCalibStatus(){
+      if(calib){
+        calibStatus.innerHTML = '基準声 <strong style="color:var(--good)">登録済み</strong>' +
+          (mode==='rel' ? '（相対モードで判定中）' : '（現在は絶対基準で判定中）');
+      } else {
+        calibStatus.textContent = '基準声は未登録です（絶対基準で判定中）';
+      }
+    }
+    modeSeg.addEventListener('click', e=>{
+      const b = e.target.closest('button'); if(!b) return;
+      setMode(b.dataset.mode);
+    });
+
+    // ===== しきい値スライダー =====
+    function applyTH(){
+      thGood.value = TH.good; thBad.value = TH.bad;
+      thGoodVal.textContent = TH.good; thBadVal.textContent = TH.bad;
+    }
+    function onThInput(){
+      let g = parseInt(thGood.value,10), b = parseInt(thBad.value,10);
+      if(g > b-5) {            // 緑と赤の境界が近すぎないように
+        if(document.activeElement===thGood) b = Math.min(90, g+5);
+        else g = Math.max(10, b-5);
+      }
+      TH = {good:g, bad:b};
+      applyTH();
+      saveJSON('tfgc_th_v1', TH);
+      renderHistory();         // 色・基準線を反映
+    }
+    thGood.addEventListener('input', onThInput);
+    thBad.addEventListener('input', onThInput);
+    $('thReset').addEventListener('click', ()=>{ TH={good:35,bad:65}; applyTH(); saveJSON('tfgc_th_v1',TH); renderHistory(); });
+
+    // ===== 履歴グラフ =====
+    function renderHistory(){
+      if(!history.length){
+        histEmpty.style.display='block'; histWrap.style.display='none'; return;
+      }
+      histEmpty.style.display='none'; histWrap.style.display='block';
+
+      const W=320, H=160, padT=12, padB=14, plotH=H-padT-padB;
+      const y = v => padT + (100-clamp(v,0,100))/100*plotH;
+      const data = history.slice(-20);
+      const n = data.length;
+      const slot = W/n;
+      const bw = Math.min(slot*0.62, 26);
+      let svg='';
+      // 基準線（緑/赤しきい値）
+      [[TH.good,'#22c55e'],[TH.bad,'#ef4444']].forEach(([t,c])=>{
+        const yy=y(t).toFixed(1);
+        svg+='<line x1="0" y1="'+yy+'" x2="'+W+'" y2="'+yy+'" stroke="'+c+'" stroke-opacity="0.35" stroke-dasharray="4 4" stroke-width="1"/>';
+      });
+      data.forEach((d,i)=>{
+        const cx = slot*i + slot/2;
+        const yy = y(d.score);
+        const col = d.score<TH.good?'#22c55e':d.score<TH.bad?'#f59e0b':'#ef4444';
+        svg+='<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+yy.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+(H-padB-yy).toFixed(1)+'" rx="3" fill="'+col+'"/>';
+      });
+      histChart.innerHTML = svg;
+
+      let rows='';
+      history.slice(-8).reverse().forEach(d=>{
+        const dt=new Date(d.t);
+        const hm=(dt.getMonth()+1)+'/'+dt.getDate()+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');
+        const col=d.score<TH.good?'var(--good)':d.score<TH.bad?'var(--warn)':'var(--bad)';
+        rows+='<div class="hist-row"><span>'+hm+'</span><span class="sc" style="color:'+col+'">'+d.score+'</span></div>';
+      });
+      histList.innerHTML = rows;
+    }
+    $('histClear').addEventListener('click', ()=>{
+      if(!history.length) return;
+      if(confirm('測定履歴をすべて消去しますか？')){
+        history = []; saveJSON('tfgc_hist_v1', history); renderHistory();
+      }
+    });
+
+    // ===== 初期化 =====
+    applyTH();
+    [...modeSeg.children].forEach(b=> b.classList.toggle('active', b.dataset.mode===mode));
+    updateCalibStatus();
+    renderHistory();
+
     window.addEventListener('pagehide', ()=>{ if(running) stopMic(); });
   })();
   </script>
