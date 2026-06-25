@@ -537,7 +537,7 @@
 
       if(!idle || score>=3){
         if(c.cls==='good') verdictSub.innerHTML='外喉頭筋の過剰な関与は<strong>検出されていません</strong>。この感覚を覚えましょう。';
-        else if(c.cls==='warn') verdictSub.innerHTML='少し力みの兆候があります。喉を開き、息を流す意識で。';
+        else if(c.cls==='warn') verdictSub.innerHTML='少し力みの兆候があります。外喉頭筋の力を抜き、息を流す意識で。';
         else verdictSub.innerHTML='喉に<strong>力みの兆候</strong>。あくび・ため息まじりの楽な発声を試してください。';
       }
     }
@@ -675,7 +675,7 @@
         '<span style="color:var(--muted)">' +
           (c.cls==='good'
             ? 'この発声の感覚を基準として覚えておきましょう。'
-            : '喉を開き、息を流す発声で再測定し、指数が下がるか確認してください。') +
+            : '外喉頭筋の力を抜き、息を流す発声で再測定し、指数が下がるか確認してください。') +
         '</span>';
       resultBox.className = 'result-box show';
     }
