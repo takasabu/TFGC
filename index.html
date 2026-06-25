@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>のど力みチェック｜外喉頭筋の関与判定</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#1e293b;
+      --panel2:#0b1220;
+      --text:#e2e8f0;
+      --muted:#94a3b8;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --accent:#38bdf8;
+      --line:#334155;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    html,body{margin:0;padding:0;}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Segoe UI",Roboto,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      min-height:100dvh;
+      padding:env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 24px);
+      max-width:560px;
+      margin:0 auto;
+    }
+    header{padding:18px 0 8px;text-align:center;}
+    header h1{font-size:20px;margin:0 0 4px;letter-spacing:.02em;}
+    header p{font-size:12px;color:var(--muted);margin:0;line-height:1.5;}
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:18px;
+      margin-top:14px;
+      box-shadow:0 8px 24px rgba(0,0,0,.25);
+    }
+
+    /* 判定メーター */
+    .verdict{text-align:center;}
+    .gauge-wrap{position:relative;width:220px;height:220px;margin:6px auto 4px;}
+    .gauge-wrap svg{transform:rotate(-90deg);}
+    .gauge-center{
+      position:absolute;inset:0;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;text-align:center;
+    }
+    .gauge-score{font-size:54px;font-weight:800;line-height:1;}
+    .gauge-unit{font-size:13px;color:var(--muted);margin-top:6px;}
+    .verdict-label{
+      display:inline-block;margin-top:6px;font-size:18px;font-weight:700;
+      padding:8px 18px;border-radius:999px;
+    }
+    .verdict-sub{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;}
+
+    /* 状態色 */
+    .state-good{color:var(--good);}
+    .state-warn{color:var(--warn);}
+    .state-bad{color:var(--bad);}
+    .bg-good{background:rgba(34,197,94,.15);color:var(--good);}
+    .bg-warn{background:rgba(245,158,11,.15);color:var(--warn);}
+    .bg-bad{background:rgba(239,68,68,.15);color:var(--bad);}
+
+    /* ボタン */
+    .btn{
+      width:100%;border:none;border-radius:14px;padding:16px;
+      font-size:17px;font-weight:700;cursor:pointer;margin-top:14px;
+      transition:transform .08s ease, background .2s;
+    }
+    .btn:active{transform:scale(.98);}
+    .btn-start{background:var(--accent);color:#06202c;}
+    .btn-stop{background:var(--bad);color:#fff;}
+    .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-size:14px;padding:12px;}
+
+    /* レベルメーター */
+    .level{height:8px;background:var(--panel2);border-radius:999px;overflow:hidden;margin-top:12px;}
+    .level-bar{height:100%;width:0%;background:var(--accent);transition:width .06s linear;}
+    .hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px;min-height:18px;}
+
+    /* 特徴量 */
+    h2{font-size:14px;margin:0 0 12px;color:var(--text);}
+    .feat{margin-bottom:14px;}
+    .feat:last-child{margin-bottom:0;}
+    .feat-head{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:5px;}
+    .feat-name{color:var(--text);}
+    .feat-val{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px;}
+    .meter{height:10px;background:var(--panel2);border-radius:999px;overflow:hidden;position:relative;}
+    .meter-bar{height:100%;width:0%;border-radius:999px;transition:width .12s ease, background .3s;}
+    .feat-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5;}
+
+    .session{display:flex;gap:10px;margin-top:14px;}
+    .session .btn{margin-top:0;}
+    .result-box{
+      margin-top:14px;padding:14px;border-radius:12px;font-size:13px;line-height:1.7;
+      background:var(--panel2);border:1px solid var(--line);display:none;
+    }
+    .result-box.show{display:block;}
+    .result-box b{font-size:15px;}
+
+    details{margin-top:16px;}
+    summary{font-size:13px;color:var(--muted);cursor:pointer;padding:8px 0;}
+    .note{font-size:12px;color:var(--muted);line-height:1.7;}
+    .note ul{padding-left:18px;margin:8px 0;}
+    .disclaimer{
+      font-size:11px;color:var(--muted);text-align:center;
+      margin-top:20px;line-height:1.6;padding:0 8px;
+    }
+    .countdown{font-size:13px;color:var(--accent);text-align:center;margin-top:8px;min-height:18px;}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>のど力みチェック</h1>
+    <p>発声時に<strong>外喉頭筋</strong>（のどを締める・吊り上げる筋）が<br>過剰に働いていないかを音声から推定します</p>
+  </header>
+
+  <!-- 判定カード -->
+  <div class="card verdict">
+    <div class="gauge-wrap">
+      <svg width="220" height="220" viewBox="0 0 220 220">
+        <circle cx="110" cy="110" r="95" fill="none" stroke="#0b1220" stroke-width="18"/>
+        <circle id="gaugeArc" cx="110" cy="110" r="95" fill="none" stroke="#22c55e"
+                stroke-width="18" stroke-linecap="round"
+                stroke-dasharray="596.9" stroke-dashoffset="596.9"/>
+      </svg>
+      <div class="gauge-center">
+        <div id="score" class="gauge-score state-good">--</div>
+        <div class="gauge-unit">力み指数 / 100</div>
+      </div>
+    </div>
+    <div id="verdictLabel" class="verdict-label bg-good">待機中</div>
+    <div id="verdictSub" class="verdict-sub">「あー」と数秒、まっすぐ伸ばして発声してください。<br>関与が<strong>少ない</strong>ほど良い状態です。</div>
+
+    <button id="micBtn" class="btn btn-start">マイクを開始して測定</button>
+    <div class="level"><div id="levelBar" class="level-bar"></div></div>
+    <div id="hint" class="hint">マイクの使用を許可してください</div>
+
+    <div class="session">
+      <button id="sessionBtn" class="btn btn-ghost" disabled>5秒間の測定を記録する</button>
+    </div>
+    <div id="countdown" class="countdown"></div>
+    <div id="resultBox" class="result-box"></div>
+  </div>
+
+  <!-- 特徴量カード -->
+  <div class="card">
+    <h2>音響指標の内訳</h2>
+
+    <div class="feat">
+      <div class="feat-head"><span class="feat-name">高域の締め付け（スペクトル傾斜）</span><span id="vSpectral" class="feat-val">--</span></div>
+      <div class="meter"><div id="bSpectral" class="meter-bar"></div></div>
+      <div class="feat-desc">のどを締めると高い周波数成分が強まります。低いほど自然な響き。</div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-head"><span class="feat-name">喉頭の吊り上がり（ピッチ上昇）</span><span id="vDrift" class="feat-val">--</span></div>
+      <div class="meter"><div id="bDrift" class="meter-bar"></div></div>
+      <div class="feat-desc">発声中に音程が上ずると喉頭挙上のサイン。安定して伸ばせると低くなります。</div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-head"><span class="feat-name">声の揺れ（ジッター/シマー）</span><span id="vJitter" class="feat-val">--</span></div>
+      <div class="meter"><div id="bJitter" class="meter-bar"></div></div>
+      <div class="feat-desc">過緊張は周期・音量を不安定にします。低いほど滑らかな発声。</div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-head"><span class="feat-name">声の濁り（調波雑音比 HNR）</span><span id="vHnr" class="feat-val">--</span></div>
+      <div class="meter"><div id="bHnr" class="meter-bar"></div></div>
+      <div class="feat-desc">締めすぎ・力みは雑音成分を増やします。低いほどクリアな声。</div>
+    </div>
+
+    <div class="feat" style="margin-top:16px;">
+      <div class="feat-head"><span class="feat-name">基本周波数 F0</span><span id="vF0" class="feat-val">-- Hz</span></div>
+    </div>
+  </div>
+
+  <details>
+    <summary>使い方・判定の仕組みについて</summary>
+    <div class="note">
+      <p><strong>使い方</strong></p>
+      <ul>
+        <li>静かな場所で、スマホの口元から15〜20cmで構えます。</li>
+        <li>「マイクを開始」を押し、「あー」を<strong>同じ高さ・同じ大きさ</strong>で3〜5秒伸ばします。</li>
+        <li>力みのない状態（あくびの直後、ため息まじりの楽な声）を基準に、声を変えて比べてみましょう。</li>
+        <li>「5秒間の測定を記録」で平均スコアを判定します。</li>
+      </ul>
+      <p><strong>判定の仕組み</strong></p>
+      <p>外喉頭筋の活動は本来EMG（筋電図）で測りますが、スマホでは測れません。本アプリは、外喉頭筋が過剰に働いたとき（喉頭挙上・声門の締め付け＝プレス発声）に生じる<strong>音響的な特徴</strong>──高域成分の増加、発声中のピッチ上ずり、周期・音量の不安定さ、雑音成分の増加──を解析し、それらを合成して「力み指数」として推定しています。</p>
+      <p>低い（緑）＝外喉頭筋の関与が少ない自然な発声。高い（赤）＝関与が大きい力んだ発声、と読み替えてください。</p>
+    </div>
+  </details>
+
+  <p class="disclaimer">
+    ※ 本アプリは音響特徴にもとづく簡易推定であり、医療機器・診断ツールではありません。<br>
+    発声や喉に不調がある場合は耳鼻咽喉科・音声専門医にご相談ください。
+  </p>
+
+  <script>
+  (function(){
+    "use strict";
+
+    // ===== DOM =====
+    const $ = id => document.getElementById(id);
+    const micBtn = $('micBtn');
+    const sessionBtn = $('sessionBtn');
+    const levelBar = $('levelBar');
+    const hint = $('hint');
+    const scoreEl = $('score');
+    const gaugeArc = $('gaugeArc');
+    const verdictLabel = $('verdictLabel');
+    const verdictSub = $('verdictSub');
+    const countdown = $('countdown');
+    const resultBox = $('resultBox');
+
+    const GAUGE_CIRC = 2 * Math.PI * 95; // 596.9
+
+    // ===== Audio state =====
+    let audioCtx = null, analyser = null, source = null, stream = null;
+    let running = false, rafId = null;
+    let timeBuf = null, freqBuf = null, sampleRate = 44100;
+
+    // 時系列の履歴（揺れ・ドリフト算出用）
+    const f0Hist = [];      // 直近のF0
+    const ampHist = [];     // 直近のRMS
+    const HIST = 24;
+
+    // セッション記録
+    let recording = false;
+    let recScores = [], recFeats = null, recStart = 0;
+    const REC_MS = 5000;
+
+    // 平滑化された表示値
+    let dispScore = 0;
+
+    // ===== ユーティリティ =====
+    const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+    const lerp = (a,b,t)=>a+(b-a)*t;
+
+    function setMeter(barId, valId, pct, valText, invertColor){
+      const bar = $(barId);
+      pct = clamp(pct,0,100);
+      bar.style.width = pct + '%';
+      // pct高=悪い → 赤。invertColorは使っていない（全指標：低い方が良い）
+      let col;
+      if(pct < 40) col = 'var(--good)';
+      else if(pct < 70) col = 'var(--warn)';
+      else col = 'var(--bad)';
+      bar.style.background = col;
+      $(valId).textContent = valText;
+    }
+
+    // ===== ピッチ検出（自己相関）=====
+    // 戻り値: {f0, clarity(0-1)}  無声/不明瞭なら f0=0
+    function detectPitch(buf, sr){
+      const n = buf.length;
+      // RMS
+      let rms = 0;
+      for(let i=0;i<n;i++) rms += buf[i]*buf[i];
+      rms = Math.sqrt(rms/n);
+      if(rms < 0.008) return {f0:0, clarity:0, rms};
+
+      // 自己相関
+      const MINF = 70, MAXF = 500;
+      const maxLag = Math.floor(sr/MINF);
+      const minLag = Math.floor(sr/MAXF);
+      let bestLag = -1, bestVal = 0;
+      // r(0)
+      let r0 = 0;
+      for(let i=0;i<n;i++) r0 += buf[i]*buf[i];
+      if(r0 === 0) return {f0:0, clarity:0, rms};
+
+      let prev = 0, foundDip = false;
+      for(let lag=minLag; lag<=maxLag; lag++){
+        let r = 0;
+        for(let i=0;i<n-lag;i++) r += buf[i]*buf[i+lag];
+        const norm = r / r0;
+        // 最初の谷を越えてからピークを探す（オクターブ誤検出抑制）
+        if(!foundDip){ if(norm < 0.4) foundDip = true; }
+        else if(norm > bestVal){ bestVal = norm; bestLag = lag; }
+        prev = norm;
+      }
+      if(bestLag <= 0 || bestVal < 0.45) return {f0:0, clarity:bestVal, rms};
+
+      // 放物線補間で精度向上
+      let lag = bestLag;
+      const yl = autocorrAt(buf, lag-1, r0);
+      const yc = bestVal;
+      const yr = autocorrAt(buf, lag+1, r0);
+      const denom = (yl - 2*yc + yr);
+      if(denom !== 0){ lag = lag + 0.5*(yl - yr)/denom; }
+
+      const f0 = sr / lag;
+      return {f0, clarity:bestVal, rms};
+    }
+    function autocorrAt(buf, lag, r0){
+      if(lag<=0) return 0;
+      const n = buf.length;
+      let r = 0;
+      for(let i=0;i<n-lag;i++) r += buf[i]*buf[i+lag];
+      return r/r0;
+    }
+
+    // ===== スペクトル解析（締め付け指標）=====
+    // freqBuf はdB値。F0を基準に高域/低域のエネルギー比を取る
+    function spectralTilt(freqDb, sr, f0){
+      const n = freqDb.length;            // = fftSize/2
+      const binHz = (sr/2)/n;
+      // dB→linear（相対）
+      function bandEnergy(lo,hi){
+        let sum=0, cnt=0;
+        const a=Math.max(1,Math.floor(lo/binHz));
+        const b=Math.min(n-1,Math.floor(hi/binHz));
+        for(let i=a;i<=b;i++){
+          sum += Math.pow(10, freqDb[i]/10);
+          cnt++;
+        }
+        return cnt? sum/cnt : 1e-12;
+      }
+      const low  = bandEnergy(80, 1000);
+      const high = bandEnergy(2500, 6000);
+      if(low <= 0) return 0;
+      // 比のdB。高域が強いほど大（締め付け傾向）
+      let ratioDb = 10*Math.log10(high/low);
+      return ratioDb; // 概ね -40 〜 +5 程度
+    }
+
+    // ===== 揺れ（ジッター/シマー）=====
+    function jitterShimmer(){
+      // ジッター：F0の相対変動
+      let jit=0, jn=0;
+      for(let i=1;i<f0Hist.length;i++){
+        if(f0Hist[i]>0 && f0Hist[i-1]>0){
+          jit += Math.abs(f0Hist[i]-f0Hist[i-1])/f0Hist[i-1];
+          jn++;
+        }
+      }
+      jit = jn? jit/jn : 0; // 0〜0.1程度
+      // シマー：振幅の相対変動
+      let shim=0, sn=0;
+      for(let i=1;i<ampHist.length;i++){
+        if(ampHist[i]>0 && ampHist[i-1]>0){
+          shim += Math.abs(ampHist[i]-ampHist[i-1])/ampHist[i-1];
+          sn++;
+        }
+      }
+      shim = sn? shim/sn : 0;
+      return {jit, shim};
+    }
+
+    // ===== ピッチドリフト（喉頭挙上の代理）=====
+    function pitchDrift(){
+      const v = f0Hist.filter(x=>x>0);
+      if(v.length < 6) return 0;
+      // 後半平均 − 前半平均、半音換算
+      const half = Math.floor(v.length/2);
+      const a = avg(v.slice(0,half));
+      const b = avg(v.slice(half));
+      if(a<=0) return 0;
+      const semitones = 12*Math.log2(b/a); // 正＝上ずり
+      return semitones;
+    }
+    function avg(arr){return arr.length? arr.reduce((s,x)=>s+x,0)/arr.length : 0;}
+
+    // ===== HNR推定 =====
+    // 自己相関ピーク r からの近似: HNR = 10log10(r/(1-r))
+    function hnrFrom(clarity){
+      const r = clamp(clarity, 0.001, 0.999);
+      return 10*Math.log10(r/(1-r)); // 低クラリティ→低HNR
+    }
+
+    // ===== 0-100スコア化（各指標：高い=力み）=====
+    function normSpectral(ratioDb){
+      // -25dB付近=自然(0) , -5dB付近=強い締め付け(100)
+      return clamp((ratioDb + 25) / 20 * 100, 0, 100);
+    }
+    function normDrift(semi){
+      // 0.3半音以内=自然(0) , 2半音上ずり=100
+      return clamp((Math.abs(semi) - 0.3) / 1.7 * 100, 0, 100);
+    }
+    function normJitter(jit, shim){
+      // jitter 1%以下/shimmer 4%以下=自然
+      const j = clamp((jit*100 - 0.6)/2.4 * 100, 0, 100);
+      const s = clamp((shim*100 - 3)/9 * 100, 0, 100);
+      return (j*0.5 + s*0.5);
+    }
+    function normHnr(hnr){
+      // HNR 20dB以上=クリア(0) , 7dB以下=濁り(100)
+      return clamp((20 - hnr) / 13 * 100, 0, 100);
+    }
+
+    // ===== メインループ =====
+    function tick(){
+      if(!running) return;
+      rafId = requestAnimationFrame(tick);
+
+      analyser.getFloatTimeDomainData(timeBuf);
+      analyser.getFloatFrequencyData(freqBuf);
+
+      const {f0, clarity, rms} = detectPitch(timeBuf, sampleRate);
+
+      // レベルメーター
+      const level = clamp(rms*600, 0, 100);
+      levelBar.style.width = level + '%';
+
+      const voiced = f0 > 0 && rms > 0.012;
+
+      if(voiced){
+        f0Hist.push(f0); if(f0Hist.length>HIST) f0Hist.shift();
+        ampHist.push(rms); if(ampHist.length>HIST) ampHist.shift();
+        hint.textContent = '発声を解析中…';
+      } else {
+        hint.textContent = '「あー」と伸ばして発声してください';
+      }
+
+      // 特徴量
+      const ratioDb = voiced ? spectralTilt(freqBuf, sampleRate, f0) : null;
+      const {jit, shim} = jitterShimmer();
+      const drift = pitchDrift();
+      const hnr = voiced ? hnrFrom(clarity) : null;
+
+      // 0-100化
+      const sSpectral = ratioDb!==null ? normSpectral(ratioDb) : 0;
+      const sDrift    = normDrift(drift);
+      const sJitter   = normJitter(jit, shim);
+      const sHnr      = hnr!==null ? normHnr(hnr) : 0;
+
+      // 合成（重み）— 締め付けとドリフトを重視
+      const composite = voiced
+        ? (sSpectral*0.38 + sDrift*0.27 + sJitter*0.18 + sHnr*0.17)
+        : null;
+
+      // 表示更新
+      if(voiced && composite!==null){
+        // 表示スコアは平滑化
+        dispScore = lerp(dispScore, composite, 0.18);
+        updateVerdict(dispScore);
+        setMeter('bSpectral','vSpectral', sSpectral, ratioDb.toFixed(1)+' dB');
+        setMeter('bDrift','vDrift', sDrift, (drift>=0?'+':'')+drift.toFixed(2)+' 半音');
+        setMeter('bJitter','vJitter', sJitter, 'J '+(jit*100).toFixed(1)+'% / S '+(shim*100).toFixed(1)+'%');
+        setMeter('bHnr','vHnr', sHnr, hnr.toFixed(1)+' dB');
+        $('vF0').textContent = f0.toFixed(0) + ' Hz';
+
+        // セッション記録
+        if(recording){
+          recScores.push(composite);
+          accumFeat(sSpectral, sDrift, sJitter, sHnr);
+        }
+      } else if(!recording){
+        // 無声時はゲージをゆっくり待機色へ
+        dispScore = lerp(dispScore, 0, 0.05);
+        updateVerdict(dispScore, true);
+      }
+    }
+
+    function updateVerdict(score, idle){
+      const s = Math.round(score);
+      scoreEl.textContent = idle && score<3 ? '--' : s;
+      // ゲージ
+      const off = GAUGE_CIRC * (1 - clamp(score,0,100)/100);
+      gaugeArc.style.strokeDashoffset = off;
+
+      let col, label, cls;
+      if(score < 35){ col='#22c55e'; label='関与なし（良好）'; cls='good'; }
+      else if(score < 65){ col='#f59e0b'; label='やや関与あり'; cls='warn'; }
+      else { col='#ef4444'; label='関与あり（力み）'; cls='bad'; }
+
+      gaugeArc.style.stroke = col;
+      scoreEl.className = 'gauge-score state-'+cls;
+      verdictLabel.textContent = idle && score<3 ? '待機中' : label;
+      verdictLabel.className = 'verdict-label bg-'+(idle && score<3 ? 'good' : cls);
+
+      if(!idle || score>=3){
+        if(cls==='good') verdictSub.innerHTML='外喉頭筋の過剰な関与は<strong>検出されていません</strong>。この感覚を覚えましょう。';
+        else if(cls==='warn') verdictSub.innerHTML='少し力みの兆候があります。喉を開き、息を流す意識で。';
+        else verdictSub.innerHTML='喉に<strong>力みの兆候</strong>。あくび・ため息まじりの楽な発声を試してください。';
+      }
+    }
+
+    // セッション特徴量の蓄積
+    function accumFeat(sp,dr,ji,hn){
+      if(!recFeats) recFeats={sp:0,dr:0,ji:0,hn:0,n:0};
+      recFeats.sp+=sp; recFeats.dr+=dr; recFeats.ji+=ji; recFeats.hn+=hn; recFeats.n++;
+    }
+
+    // ===== マイク制御 =====
+    async function startMic(){
+      try{
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false }
+        });
+      }catch(e){
+        hint.textContent = 'マイクを利用できません：' + (e.name||e.message);
+        return;
+      }
+      audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      if(audioCtx.state==='suspended') await audioCtx.resume();
+      sampleRate = audioCtx.sampleRate;
+      source = audioCtx.createMediaStreamSource(stream);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 4096;
+      analyser.smoothingTimeConstant = 0.0;
+      source.connect(analyser);
+      timeBuf = new Float32Array(analyser.fftSize);
+      freqBuf = new Float32Array(analyser.frequencyBinCount);
+
+      running = true;
+      micBtn.textContent = 'マイクを停止';
+      micBtn.className = 'btn btn-stop';
+      sessionBtn.disabled = false;
+      hint.textContent = '「あー」と伸ばして発声してください';
+      tick();
+    }
+
+    function stopMic(){
+      running = false;
+      if(rafId) cancelAnimationFrame(rafId);
+      if(stream) stream.getTracks().forEach(t=>t.stop());
+      if(audioCtx) audioCtx.close();
+      audioCtx=null; analyser=null; source=null; stream=null;
+      micBtn.textContent = 'マイクを開始して測定';
+      micBtn.className = 'btn btn-start';
+      sessionBtn.disabled = true;
+      levelBar.style.width='0%';
+      hint.textContent = 'マイクの使用を許可してください';
+      recording=false; countdown.textContent='';
+      f0Hist.length=0; ampHist.length=0;
+    }
+
+    micBtn.addEventListener('click', ()=>{
+      if(running) stopMic(); else startMic();
+    });
+
+    // ===== 5秒セッション =====
+    sessionBtn.addEventListener('click', ()=>{
+      if(!running || recording) return;
+      recording = true;
+      recScores = []; recFeats = null; recStart = performance.now();
+      resultBox.classList.remove('show');
+      sessionBtn.disabled = true;
+      countdown.textContent = '測定中… 「あー」と伸ばしてください';
+
+      const timer = setInterval(()=>{
+        const el = performance.now() - recStart;
+        const remain = Math.max(0, REC_MS - el);
+        countdown.textContent = '測定中… あと ' + (remain/1000).toFixed(1) + ' 秒';
+        if(remain<=0){
+          clearInterval(timer);
+          recording = false;
+          sessionBtn.disabled = false;
+          countdown.textContent = '';
+          showResult();
+        }
+      }, 100);
+    });
+
+    function showResult(){
+      if(recScores.length < 5){
+        resultBox.innerHTML = '十分な発声が検出できませんでした。声を伸ばしてもう一度お試しください。';
+        resultBox.classList.add('show');
+        return;
+      }
+      // 安定区間の中央値寄り平均（外れ値を緩和）
+      const sorted = recScores.slice().sort((a,b)=>a-b);
+      const trimmed = sorted.slice(Math.floor(sorted.length*0.1), Math.ceil(sorted.length*0.9));
+      const mean = avg(trimmed);
+      const f = recFeats;
+      const fm = f && f.n ? {sp:f.sp/f.n, dr:f.dr/f.n, ji:f.ji/f.n, hn:f.hn/f.n} : null;
+
+      let verdict, vcls;
+      if(mean < 35){ verdict='外喉頭筋の関与は少ない（良好）'; vcls='good'; }
+      else if(mean < 65){ verdict='やや関与あり'; vcls='warn'; }
+      else { verdict='外喉頭筋の関与が大きい（力み）'; vcls='bad'; }
+
+      // 最も支配的な要因
+      let factor='';
+      if(fm){
+        const items=[['高域の締め付け',fm.sp],['喉頭の吊り上がり',fm.dr],['声の揺れ',fm.ji],['声の濁り',fm.hn]];
+        items.sort((a,b)=>b[1]-a[1]);
+        if(items[0][1] > 40) factor = '主な要因：' + items[0][0];
+      }
+
+      resultBox.innerHTML =
+        '<b class="state-'+vcls+'">判定：'+verdict+'</b><br>' +
+        '平均 力み指数：<b>'+Math.round(mean)+'</b> / 100　（'+recScores.length+'フレーム）<br>' +
+        (factor ? factor+'<br>' : '') +
+        '<span style="color:var(--muted)">' +
+          (vcls==='good'
+            ? 'この発声の感覚を基準として覚えておきましょう。'
+            : '喉を開き、息を流す発声で再測定し、指数が下がるか確認してください。') +
+        '</span>';
+      resultBox.className = 'result-box show';
+    }
+
+    // ページ離脱で停止
+    window.addEventListener('pagehide', ()=>{ if(running) stopMic(); });
+  })();
+  </script>
+</body>
+</html>
