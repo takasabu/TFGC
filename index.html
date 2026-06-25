@@ -177,7 +177,7 @@
     <div class="feat">
       <div class="feat-head"><span class="feat-name">高域の締め付け（スペクトル傾斜）</span><span id="vSpectral" class="feat-val">--</span></div>
       <div class="meter"><div id="bSpectral" class="meter-bar"></div></div>
-      <div class="feat-desc">のどを締めると高い周波数成分が強まります。低いほど自然な響き。</div>
+      <div class="feat-desc">のどを締めると高い周波数成分が強まります（声量の影響は自動補正）。低いほど自然な響き。</div>
     </div>
 
     <div class="feat">
@@ -423,6 +423,18 @@
       return 10*Math.log10(r/(1-r));
     }
 
+    // ===== 音量補正 =====
+    // 声を大きくすると音源スペクトルが高域寄りになり、締め付けが無くても
+    // 高域/低域比が上がる。実測レベルに応じて、基準レベルを超えた分だけ
+    // 締め付け指標(dB)を割り引き、声量による誤判定を抑える。
+    const TILT_REF_DB = -28; // 基準レベル（これ以下は補正しない）
+    const TILT_K = 0.6;      // 補正係数（dB/dB）
+    function compensateTilt(ratioDb, rms){
+      const levelDb = 20*Math.log10(Math.max(rms, 1e-5));
+      const over = Math.max(0, levelDb - TILT_REF_DB);
+      return ratioDb - TILT_K*over;
+    }
+
     // ===== 絶対基準の0-100化 =====
     function normSpectral(ratioDb){ return clamp((ratioDb + 25) / 20 * 100, 0, 100); }
     function normDrift(semi){ return clamp((Math.abs(semi) - 0.3) / 1.7 * 100, 0, 100); }
@@ -450,7 +462,7 @@
         sJitter   = normJitter(raw.jit, raw.shim);
         sHnr      = normHnr(raw.hnr);
       }
-      const composite = sSpectral*0.38 + sDrift*0.27 + sJitter*0.18 + sHnr*0.17;
+      const composite = sSpectral*0.28 + sDrift*0.30 + sJitter*0.21 + sHnr*0.21;
       return {sSpectral, sDrift, sJitter, sHnr, composite};
     }
 
@@ -494,7 +506,7 @@
       }
 
       const raw = {
-        ratioDb: spectralTilt(freqBuf, sampleRate),
+        ratioDb: compensateTilt(spectralTilt(freqBuf, sampleRate), rms),
         drift: pitchDrift(),
         hnr: hnrFrom(clarity)
       };
